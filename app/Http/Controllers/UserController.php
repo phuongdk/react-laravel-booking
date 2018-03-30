@@ -99,7 +99,7 @@ class UserController extends Controller
     public function delete(Request $request, $id)
     {
         if ($user = User::find($id)) {
-            // $user->delete();
+            $user->delete();
             return response()->json([
                 'message' => 'Delete successfully user ' . $user->name,
                 'status' => 'success'
