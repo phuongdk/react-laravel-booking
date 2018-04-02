@@ -37,6 +37,10 @@ export default class UserList extends Component {
             this.currentPage = queryString.parse(nextProps.location.search).page || 1;
             this.getUsers(nextProps);
         }
+        this.setState({
+            message: null,
+            status: null
+        });
     }
     
     getUsers(props = this.props, forcePage = null) {
@@ -70,18 +74,20 @@ export default class UserList extends Component {
         .catch(error => console.log(error));
     }
     
-    deleteUser(id) {
+    deleteUser(user) {
         if(window.confirm('Are you sure?')) {
-            UserModel.deleteUser(id)
+            UserModel.deleteUser(user.id)
             .then(results => {
                 if (results.data.status == 'success') {
-                this.getUsers();
-                this.setState({message: results.data.message,status: results.data.status})
+                this.state.users.data.splice(this.state.users.data.indexOf(user), 1);
                 }
-                this.setState({message: results.data.message,status: results.data.status})
-            }
+                this.setState({
+                    message: results.data.message || null,
+                    status: results.data.status || null
+                });
+                }
             )
-        .catch(error => console.log(error));
+        .catch(error => console.log('error', error));
         }
     }
     
@@ -100,16 +106,20 @@ export default class UserList extends Component {
     }
     
     refreshPage(event) {
+        this.setState({
+            message: null,
+            status: null
+        });
         this.getUsers();
     }
     
     render() {
         const users = this.state.users;
         return (
-            <div>
+            <div className="user-wrapper">
             { 
             this.state.status && this.state.message 
-            ? <div className={`alert alert-${this.state.status}`} role="alert">
+            ? <div id="dusm" className={`alert alert-${this.state.status}`} role="alert">
                 <span className="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span>{this.state.message}</span>
               </div>
@@ -142,7 +152,7 @@ export default class UserList extends Component {
                             <td>{ user.email }</td>
                             <td>
                             <Link style={{lineHeight: '30px'}} to={`/users/${user.id}`} className="btn btn-primary btn-sm">Edit</Link>  
-                            <button onClick={ this.deleteUser.bind(this, user.id) } className="btn btn-danger btn-sm ml-1">Delete</button>
+                            <button onClick={ this.deleteUser.bind(this, user) } className="btn btn-danger btn-sm ml-1">Delete</button>
                             </td>
                         </tr>
                     ) :

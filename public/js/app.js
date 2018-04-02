@@ -5415,7 +5415,7 @@ var UserModel = function () {
         value: function updateUser(id) {
             var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(__WEBPACK_IMPORTED_MODULE_1__config__["a" /* default */].apiUrl + '/users/' + id, data);
+            return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.put(__WEBPACK_IMPORTED_MODULE_1__config__["a" /* default */].apiUrl + '/users/' + id, data);
         }
     }]);
 
@@ -58318,7 +58318,6 @@ var User = function (_Component) {
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["e" /* Switch */],
                         null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_2__list__["a" /* default */] }),
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { exact: true, path: '/users', component: __WEBPACK_IMPORTED_MODULE_2__list__["a" /* default */] }),
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { exact: true, path: '/users/create', component: __WEBPACK_IMPORTED_MODULE_3__create__["a" /* default */] }),
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_react_router_dom__["d" /* Route */], { path: '/users/:id', component: __WEBPACK_IMPORTED_MODULE_4__show__["a" /* default */] })
@@ -58401,6 +58400,10 @@ var UserList = function (_Component) {
                 this.currentPage = __WEBPACK_IMPORTED_MODULE_3_query_string___default.a.parse(nextProps.location.search).page || 1;
                 this.getUsers(nextProps);
             }
+            this.setState({
+                message: null,
+                status: null
+            });
         }
     }, {
         key: 'getUsers',
@@ -58443,18 +58446,20 @@ var UserList = function (_Component) {
         }
     }, {
         key: 'deleteUser',
-        value: function deleteUser(id) {
+        value: function deleteUser(user) {
             var _this3 = this;
 
             if (window.confirm('Are you sure?')) {
-                __WEBPACK_IMPORTED_MODULE_1__model__["a" /* default */].deleteUser(id).then(function (results) {
+                __WEBPACK_IMPORTED_MODULE_1__model__["a" /* default */].deleteUser(user.id).then(function (results) {
                     if (results.data.status == 'success') {
-                        _this3.getUsers();
-                        _this3.setState({ message: results.data.message, status: results.data.status });
+                        _this3.state.users.data.splice(_this3.state.users.data.indexOf(user), 1);
                     }
-                    _this3.setState({ message: results.data.message, status: results.data.status });
+                    _this3.setState({
+                        message: results.data.message || null,
+                        status: results.data.status || null
+                    });
                 }).catch(function (error) {
-                    return console.log(error);
+                    return console.log('error', error);
                 });
             }
         }
@@ -58478,6 +58483,10 @@ var UserList = function (_Component) {
     }, {
         key: 'refreshPage',
         value: function refreshPage(event) {
+            this.setState({
+                message: null,
+                status: null
+            });
             this.getUsers();
         }
     }, {
@@ -58488,10 +58497,10 @@ var UserList = function (_Component) {
             var users = this.state.users;
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                null,
+                { className: 'user-wrapper' },
                 this.state.status && this.state.message ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { className: 'alert alert-' + this.state.status, role: 'alert' },
+                    { id: 'dusm', className: 'alert alert-' + this.state.status, role: 'alert' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-exclamation-sign', 'aria-hidden': 'true' }),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'span',
@@ -58586,7 +58595,7 @@ var UserList = function (_Component) {
                                     ),
                                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                         'button',
-                                        { onClick: _this5.deleteUser.bind(_this5, user.id), className: 'btn btn-danger btn-sm ml-1' },
+                                        { onClick: _this5.deleteUser.bind(_this5, user), className: 'btn btn-danger btn-sm ml-1' },
                                         'Delete'
                                     )
                                 )
@@ -58952,7 +58961,6 @@ module.exports = function (encodedURI) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export FlashData */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Pagination; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
@@ -58960,42 +58968,15 @@ module.exports = function (encodedURI) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config__ = __webpack_require__(41);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
 
-
-
-var FlashData = function () {
-    function FlashData() {
-        _classCallCheck(this, FlashData);
-    }
-
-    _createClass(FlashData, null, [{
-        key: 'get',
-
-        // static data = {};
-        value: function get(key) {
-            if (this.data[key]) {
-                var data = this.data[key];
-                this.data[key] = null;
-                return data;
-            }
-            return null;
-        }
-    }, {
-        key: 'set',
-        value: function set(key, value) {
-            this.data[key] = value;
-        }
-    }]);
-
-    return FlashData;
-}();
 
 var Pagination = function (_Component) {
     _inherits(Pagination, _Component);
@@ -59101,7 +59082,10 @@ var Pagination = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__model__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom__ = __webpack_require__(39);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59112,22 +59096,152 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
+
 var UserCreate = function (_Component) {
     _inherits(UserCreate, _Component);
 
-    function UserCreate() {
+    function UserCreate(props) {
         _classCallCheck(this, UserCreate);
 
-        return _possibleConstructorReturn(this, (UserCreate.__proto__ || Object.getPrototypeOf(UserCreate)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (UserCreate.__proto__ || Object.getPrototypeOf(UserCreate)).call(this, props));
+
+        _this.state = {
+            message: null,
+            status: null,
+            name: '',
+            email: '',
+            password: ''
+        };
+        _this.handleChange = _this.handleChange.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        return _this;
     }
 
     _createClass(UserCreate, [{
+        key: 'handleChange',
+        value: function handleChange(event) {
+            var value = event.target.value;
+            var name = event.target.name;
+            this.setState(_defineProperty({}, name, value));
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            var _this2 = this;
+
+            __WEBPACK_IMPORTED_MODULE_1__model__["a" /* default */].createUser({
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password
+            }).then(function (results) {
+                _this2.setState({
+                    message: results.data.message,
+                    status: results.data.status,
+                    name: '',
+                    email: '',
+                    password: ''
+                });
+            }).catch(function (error) {
+                return console.log(error);
+            });
+            event.preventDefault();
+        }
+    }, {
         key: 'render',
         value: function render() {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                null,
-                'UserCreate Component'
+                { className: 'user-wrapper' },
+                this.state.status === 'success' && this.state.message ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { id: 'dusm', className: 'alert alert-' + this.state.status, role: 'alert' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-exclamation-sign', 'aria-hidden': 'true' }),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        null,
+                        this.state.message
+                    )
+                ) : null,
+                this.state.status === 'danger' && this.state.message ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { id: 'dusm', className: 'alert alert-' + this.state.status, role: 'alert' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'ul',
+                        null,
+                        this.state.message.name && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.name
+                        ),
+                        this.state.message.email && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.email
+                        ),
+                        this.state.message.password && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.password
+                        )
+                    )
+                ) : null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    { className: 'page-header mb-1' },
+                    'Users Create'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    __WEBPACK_IMPORTED_MODULE_2_react_router_dom__["a" /* BrowserRouter */],
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'mb-2' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            __WEBPACK_IMPORTED_MODULE_2_react_router_dom__["b" /* Link */],
+                            { title: 'back to user page', to: '/users', className: 'btn btn-primary' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-arrow-left' })
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'form',
+                    { onSubmit: this.handleSubmit },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Name'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'text', className: 'form-control', name: 'name', placeholder: 'Enter name', onChange: this.handleChange, value: this.state.name })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Email'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'email', className: 'form-control', name: 'email', placeholder: 'Enter email', onChange: this.handleChange, value: this.state.email })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Password'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'password', className: 'form-control', name: 'password', placeholder: 'Enter password', onChange: this.handleChange, value: this.state.password })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'button',
+                        { type: 'submit', className: 'btn btn-default' },
+                        'Create user'
+                    )
+                )
             );
         }
     }]);
@@ -59145,7 +59259,10 @@ var UserCreate = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__model__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_router_dom__ = __webpack_require__(39);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59156,22 +59273,171 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
+
 var UserShow = function (_Component) {
     _inherits(UserShow, _Component);
 
-    function UserShow() {
+    function UserShow(props) {
         _classCallCheck(this, UserShow);
 
-        return _possibleConstructorReturn(this, (UserShow.__proto__ || Object.getPrototypeOf(UserShow)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (UserShow.__proto__ || Object.getPrototypeOf(UserShow)).call(this, props));
+
+        _this.state = {
+            message: null,
+            status: null,
+            name: '',
+            email: '',
+            password: ''
+        };
+        _this.handleChange = _this.handleChange.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        return _this;
     }
 
     _createClass(UserShow, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.getUser();
+        }
+    }, {
+        key: 'getUser',
+        value: function getUser() {
+            var _this2 = this;
+
+            var id = this.props.match.params.id;
+            __WEBPACK_IMPORTED_MODULE_1__model__["a" /* default */].getUser(id).then(function (result) {
+                _this2.setState({
+                    name: result.data.name,
+                    email: result.data.email
+                });
+            }).catch(function (error) {
+                return console.log(error);
+            });
+        }
+    }, {
+        key: 'handleChange',
+        value: function handleChange(event) {
+            var value = event.target.value;
+            var name = event.target.name;
+            this.setState(_defineProperty({}, name, value));
+        }
+    }, {
+        key: 'handleSubmit',
+        value: function handleSubmit(event) {
+            var _this3 = this;
+
+            var id = this.props.match.params.id;
+            __WEBPACK_IMPORTED_MODULE_1__model__["a" /* default */].updateUser(id, {
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password
+            }).then(function (results) {
+                _this3.setState({
+                    message: results.data.message,
+                    status: results.data.status,
+                    password: ''
+                });
+            }).catch(function (error) {
+                return console.log(error);
+            });
+            event.preventDefault();
+        }
+    }, {
         key: 'render',
         value: function render() {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                null,
-                'UserShow Component'
+                { className: 'user-wrapper' },
+                this.state.status === 'success' && this.state.message ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { id: 'dusm', className: 'alert alert-' + this.state.status, role: 'alert' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-exclamation-sign', 'aria-hidden': 'true' }),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        null,
+                        this.state.message
+                    )
+                ) : null,
+                this.state.status === 'danger' && this.state.message ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { id: 'dusm', className: 'alert alert-' + this.state.status, role: 'alert' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'ul',
+                        null,
+                        this.state.message.name && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.name
+                        ),
+                        this.state.message.email && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.email
+                        ),
+                        this.state.message.password && __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            null,
+                            this.state.message.password
+                        )
+                    )
+                ) : null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    { className: 'page-header mb-1' },
+                    'Users Detail'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    __WEBPACK_IMPORTED_MODULE_2_react_router_dom__["a" /* BrowserRouter */],
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'mb-2' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            __WEBPACK_IMPORTED_MODULE_2_react_router_dom__["b" /* Link */],
+                            { title: 'back to user page', to: '/users', className: 'btn btn-primary' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-arrow-left' })
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'form',
+                    { onSubmit: this.handleSubmit },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Name'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'text', className: 'form-control', name: 'name', placeholder: 'Enter name', onChange: this.handleChange, value: this.state.name })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Email'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'email', className: 'form-control', name: 'email', placeholder: 'Enter email', onChange: this.handleChange, value: this.state.email })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            'Password'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { autoComplete: true, type: 'password', className: 'form-control', name: 'password', placeholder: 'Enter password', onChange: this.handleChange, value: this.state.password })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'button',
+                        { type: 'submit', className: 'btn btn-default' },
+                        'Update user'
+                    )
+                )
             );
         }
     }]);

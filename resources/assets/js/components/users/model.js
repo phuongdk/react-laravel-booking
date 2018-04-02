@@ -23,6 +23,6 @@ export default class UserModel {
     }
     
     static updateUser(id, data= {}) {
-        return axios.post(`${config.apiUrl}/users/${id}`, data);
+        return axios.put(`${config.apiUrl}/users/${id}`, data);
     }
 }

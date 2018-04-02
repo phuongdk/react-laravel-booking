@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>My React Blog App</title>
     <link rel="stylesheet" type="text/css" href="{{ secure_asset('css/app.css') }}">
-    <link rel="shortcut icon" type="image/jpg" href="{{ asset('favicon.jpg') }}"/>
+    <link rel="shortcut icon" type="image/jpg" href="{{ secure_asset('favicon.jpg') }}"/>
 </head>
 <body>
 <div id="app"></div>

@@ -10,7 +10,7 @@ export default class User extends Component {
         <Router>
             <div>
                 <Switch>
-                    <Route exact path="/" component={UserList} />
+
                     <Route exact path="/users" component={UserList} />
                     <Route exact path="/users/create" component={UserCreate} />
                     <Route path="/users/:id" component={UserShow} />

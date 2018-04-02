@@ -23,7 +23,7 @@ class UserController extends Controller
         $valid = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
         ]);
 
         if ($valid->passes()) {
@@ -33,7 +33,8 @@ class UserController extends Controller
                 'password' => bcrypt($request->input('password')),
             ]);
             return response()->json([
-                'message' => "Tạo User $user->name ($user->email) thành công",
+                'message' => "Successfully create User $user->name",
+                'status' => 'success',
                 'user' => $user->toArray()
             ]);
         } else {
@@ -43,7 +44,8 @@ class UserController extends Controller
             !$errors->has('email') ?: $data['email'] = $errors->first('email');
             !$errors->has('password') ?: $data['password'] = $errors->first('password');
             return response()->json([
-                'errors' => $data
+                'message' => $data,
+                'status' => 'danger'
             ]);
         }
     }
@@ -53,7 +55,7 @@ class UserController extends Controller
             return response()->json($user);
         }
         return response()->json([
-            'error' => 'Xảy ra lỗi trong lúc tìm'
+            'error' => 'Error getting data'
         ]);
     }
 
@@ -62,7 +64,7 @@ class UserController extends Controller
         $valid = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'password' => 'string|min:6|confirmed',
+            'password' => 'string|min:6',
         ]);
 
         if ($valid->passes()) {
@@ -75,12 +77,14 @@ class UserController extends Controller
                 }
                 $user->save();
                 return response()->json([
-                    'message' => "Cập nhật User $user->name ($user->email) thành công",
+                    'message' => "Update User $user->name ($user->email) sucessfully",
+                    'status' => 'success',
                     'user' => $user->toArray()
                 ]);
             } else {
                 return response()->json([
-                    'error' => 'Xảy ra lỗi trong lúc cập nhật'
+                    'message' => 'Error updating data',
+                    'status' => 'warning'
                 ]);
             }
         } else {
@@ -90,7 +94,8 @@ class UserController extends Controller
             !$errors->has('email') ?: $data['email'] = $errors->first('email');
             !$errors->has('password') ?: $data['password'] = $errors->first('password');
             return response()->json([
-                'errors' => $data
+                'message' => $data,
+                'status' => 'danger'
             ]);
         }
     }
@@ -106,7 +111,7 @@ class UserController extends Controller
             ]);
         }
         return response()->json([
-            'message' => 'Error deleteing data!',
+            'message' => 'Error deleting data!',
             'status' => 'danger'
         ]);
     }

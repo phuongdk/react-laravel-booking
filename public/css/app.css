@@ -37,6 +37,21 @@
   text-align: center;
 }
 
+.hide {
+  display: none;
+}
+
+.user-wrapper {
+  position: relative;
+}
+
+#dusm {
+  position: absolute;
+  top: -60px;
+  width: 100%;
+  text-align: center;
+}
+
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
  * Copyright 2011-2016 Twitter, Inc.
