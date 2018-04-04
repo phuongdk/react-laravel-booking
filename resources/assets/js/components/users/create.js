@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import UserModel from './model'
-import { BrowserRouter as Router, Link } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
+import { LoadingIndicator } from '../libs'
 
 export default class UserCreate extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      loading: false,
       message: null,
       status: null,
       name: '',
@@ -14,6 +16,11 @@ export default class UserCreate extends Component {
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.goBack = this.goBack.bind(this)
+  }
+
+  goBack () {
+    window.history.back()
   }
 
   handleChange (event) {
@@ -25,12 +32,14 @@ export default class UserCreate extends Component {
   }
 
   handleSubmit (event) {
+    this.setState({loading: true})
     UserModel.createUser({
       name: this.state.name,
       email: this.state.email,
       password: this.state.password
     }).then(results => {
       this.setState({
+        loading: false,
         message: results.data.message,
         status: results.data.status,
         name: '',
@@ -46,30 +55,29 @@ export default class UserCreate extends Component {
     return (
       <div className='user-wrapper'>
         {
-          this.state.status === 'success' && this.state.message
-            ? <div id='dusm' className={`alert alert-${this.state.status}`} role='alert'>
+          this.state.status === 'success' && this.state.message &&
+            <div id='dusm' className={`alert alert-${this.state.status}`} role='alert'>
               <span className='glyphicon glyphicon-exclamation-sign' aria-hidden='true' />
               <span>{this.state.message}</span>
             </div>
-            : null
         }
         {
-          this.state.status === 'danger' && this.state.message
-            ? <div id='dusm' className={`alert alert-${this.state.status}`} role='alert'>
-              {
-                <ul>
-                  {this.state.message.name && <li>{this.state.message.name}</li>}
-                  {this.state.message.email && <li>{this.state.message.email}</li>}
-                  {this.state.message.password && <li>{this.state.message.password}</li>}
-                </ul>
-              }
+          this.state.status === 'danger' && this.state.message &&
+            <div id='dusm' className={`alert alert-${this.state.status}`} role='alert'>
+              <ul>
+                {this.state.message.name && <li>{this.state.message.name}</li>}
+                {this.state.message.email && <li>{this.state.message.email}</li>}
+                {this.state.message.password && <li>{this.state.message.password}</li>}
+              </ul>
             </div>
-            : null
         }
         <h3 className='page-header mb-1'>Users Create</h3>
         <Router>
           <div className='mb-2'>
-            <Link title='back to user page' to='/users' className='btn btn-primary'><i className='fa fa-arrow-left' /></Link>
+            {
+            // <Link title='back to user page' to='/users' className='btn btn-primary'><i className='fa fa-arrow-left' /></Link>
+            }
+            <a className='btn btn-primary' onClick={this.goBack}><i className='fa fa-arrow-left' /></a>
           </div>
         </Router>
 
@@ -86,7 +94,10 @@ export default class UserCreate extends Component {
             <label>Password</label>
             <input autoComplete type='password' className='form-control' name='password' placeholder='Enter password' onChange={this.handleChange} value={this.state.password} />
           </div>
-          <button type='submit' className='btn btn-default'>Create user</button>
+          { this.state.loading
+            ? <a className='btn btn-default' disabled href='#'><LoadingIndicator width={24} height={24} show={this.state.loading} /></a>
+            : <button type='submit' className='btn btn-default'>Create user</button>
+          }
         </form>
       </div>
     )

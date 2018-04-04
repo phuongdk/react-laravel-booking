@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Route, Link, NavLink, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import User from './users/index'
 
 const Test = () => (
@@ -18,24 +18,34 @@ const Header = () => (
             <span className='icon-bar' />
             <span className='icon-bar' />
           </button>
+          {
+          /*
           <Router>
             <Link className='navbar-brand' to='/'>Brand</Link>
           </Router>
+          */
+          }
+          <a className='navbar-brand' href='https://ventus-phuongdk.c9users.io'>Home</a>
         </div>
         <Router>
           <div className='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
             <ul className='nav navbar-nav'>
               <li>
+                <a className='nav-link' href='https://ventus-phuongdk.c9users.io/users'>User management</a>
+              </li>
+              {
+              /*
+              <li>
                 <NavLink className='nav-link' activeStyle={{fontWeight: 'bold'}} activeClassName='active' to='/users'>User management</NavLink>
               </li>
-              {/*
-            <li>
-              <NavLink className="nav-link" activeStyle={{fontWeight: 'bold'}} activeClassName="active" to="/rooms">Room management</NavLink>
-            </li>
-            <li>
-              <NavLink className="nav-link" activeStyle={{fontWeight: 'bold'}} activeClassName="active" to="/bookings">Book management</NavLink>
-            </li>
-            */}
+              <li>
+                <NavLink className="nav-link" activeStyle={{fontWeight: 'bold'}} activeClassName="active" to="/rooms">Room management</NavLink>
+              </li>
+              <li>
+                <NavLink className="nav-link" activeStyle={{fontWeight: 'bold'}} activeClassName="active" to="/bookings">Book management</NavLink>
+              </li>
+              */
+              }
             </ul>
           </div>
         </Router>
@@ -48,12 +58,10 @@ const Main = () => (
   <Router>
     <div className='container'>
       <div className='row'>
-        <Switch>
-          <Route exact path='/' component={User} />
-          <Route path='/users' component={User} />
-          <Route path='/rooms' component={Test} />
-          <Route path='/bookings' component={Test} />
-        </Switch>
+        <Route exact path='/' component={User} />
+        <Route path='/users' component={User} />
+        <Route path='/rooms' component={Test} />
+        <Route path='/bookings' component={Test} />
       </div>
     </div>
   </Router>

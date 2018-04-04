@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import loadingIcon from './loading.gif'
 
 export class Pagination extends Component {
   getUrl (page = 1) {
@@ -62,5 +63,16 @@ export class Pagination extends Component {
       )
     }
     return null
+  }
+}
+
+export class LoadingIndicator extends Component {
+  render () {
+    const style = {
+      width: this.props.width || 64,
+      height: this.props.height || 64,
+      display: this.props.show === true ? 'inline-block' : 'none'
+    }
+    return <img className='loading-icon' src={loadingIcon} alt='LoadingIndicator' style={style} />
   }
 }

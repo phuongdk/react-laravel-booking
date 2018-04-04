@@ -12,8 +12,8 @@ export default class User extends Component {
           <Switch>
             <Route exact path='/' component={UserList} />
             <Route exact path='/users' component={UserList} />
-            <Route path='/users/create' component={UserCreate} />
-            <Route path='/users/:id' component={UserShow} />
+            <Route exact path='/users/create' component={UserCreate} />
+            <Route exact path='/users/:id' component={UserShow} />
           </Switch>
         </div>
       </Router>
